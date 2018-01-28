@@ -5,87 +5,110 @@ class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            good: 0,
-            neutral: 0,
-            bad: 0,
-            kaikki: []
+            kaikki: [],
+            palaute: [0, 0, 0]
         }
     }
 
-    hyvaPalaute = () => {
-        this.setState({
-            good: this.state.good + 1,
-            kaikki: this.state.kaikki.concat(1)
-        })
+    annaPalaute = (arvo) => {
+        const kopio = [...this.state.palaute]
+        kopio[arvo + 1] += 1
+        return () => {
+            this.setState({
+                palaute: kopio,
+                kaikki: this.state.kaikki.concat(arvo)
+            })
+        }
     }
-
-    neutraaliPalaute = () => {
-        this.setState({
-            neutral: this.state.neutral + 1,
-            kaikki: this.state.kaikki.concat(0)
-        })
-    }
-
-    huonoPalaute = () => {
-        this.setState({
-            bad: this.state.bad + 1,
-            kaikki: this.state.kaikki.concat(-1)
-        })
-    }
-
-    
-
-    
 
     render() {
-        const laskeKeskiarvo = () => {
-            //laske keskiarvo
-        }
-
-        const laskePositiiviset = () => {
-            //laske positiivisten osuus (hyvä tai neutraali)
-        }
-
         return (
             <div>
-                <Header text="Anna palautetta"/>
+                <Header text="Anna palautetta" />
                 <div>
-                    <Button 
-                        handleClick={this.hyvaPalaute}
+                    <Button
+                        handleClick={this.annaPalaute(1)}
                         text="hyvä"
                     />
-                    <Button 
-                        handleClick={this.neutraaliPalaute}
+                    <Button
+                        handleClick={this.annaPalaute(0)}
                         text="neutraali"
                     />
-                    <Button 
-                        handleClick={this.huonoPalaute}
+                    <Button
+                        handleClick={this.annaPalaute(-1)}
                         text="huono"
                     />
                 </div>
-                <Header text="Statistiikka"/>
-                <div>
-                    hyvä: {this.state.good}
-                    <br/>
-                    neutraali: {this.state.neutral}
-                    <br/>
-                    huono: {this.state.bad}
-                    <br/>
-                    keskiarvo:
-                    <br/>
-                    positiivisia:
-                </div>
+                <Header text="Statistiikka" />
+                <Statistics state={this.state} />
             </div>
         )
     }
 }
 
-const Header = ({text}) => <h2>{text}</h2>
+const Header = ({ text }) => <h2>{text}</h2>
 
-const Button = ({handleClick, text}) => (
+const Button = ({ handleClick, text }) => (
     <button onClick={handleClick}>
         {text}
     </button>
 )
+
+const Statistics = ({ state }) => {
+    if (state.kaikki.length === 0) {
+        return (
+            <div> ei yhtään palautetta annettu </div>
+        )
+    }
+
+    const laskeKeskiarvo = () => {
+        let summa = 0
+        state.kaikki.forEach(luku => {
+            summa += luku
+        })
+        return (
+            <div>
+                {summa / state.kaikki.length}
+            </div>
+        )
+    }
+
+    const laskePositiiviset = () => {
+        let lkm = 0
+        state.kaikki.forEach(luku => {
+            if (luku >= 0) {
+                lkm++
+            }
+        })
+        return (
+            <div>
+                {lkm / state.kaikki.length}
+            </div>
+        )
+    }
+
+    return (
+        <div>
+            <table>
+                <tbody>
+                    <Statistic name="hyvä" value={state.palaute[2]} />
+                    <Statistic name="neutraali" value={state.palaute[1]} />
+                    <Statistic name="huono" value={state.palaute[0]} />
+                    <Statistic name="keskiarvo" value={laskeKeskiarvo()} />
+                    <Statistic name="positiivisia" value={laskePositiiviset()} />
+                </tbody>
+            </table>
+        </div>
+    )
+}
+
+const Statistic = ({ name, value }) => {
+    return (
+        <tr>
+            <td>{name}</td>
+            <td>{value}</td>
+        </tr>
+    )
+}
 
 ReactDOM.render(<App />, document.getElementById('root'));
