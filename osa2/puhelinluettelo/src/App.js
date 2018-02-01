@@ -6,10 +6,14 @@ class App extends React.Component {
         super(props)
         this.state = {
             persons: [
-                { name: 'Arto Hellas', number: '040-1234567' }
+                { name: 'Arto Hellas', number: '040-1234567' },
+                { name: 'Martti Tienari', number: '040-123456' },
+                { name: 'Arto Järvinen', number: '040-123456' },
+                { name: 'Lea Kutvonen', number: '040-123456' }
             ],
             newName: '',
-            newNumber: ''
+            newNumber: '',
+            filter: ''
         }
     }
 
@@ -27,7 +31,7 @@ class App extends React.Component {
 
         //tähän joku parempi ratkaisu?
         const newN = this.state.newName
-        const find = this.state.persons.find(function (obj) {return obj.name === newN})
+        const find = this.state.persons.find(function (obj) { return obj.name === newN })
 
         if (find === undefined) {
             const persons = this.state.persons.concat(personObject)
@@ -43,20 +47,33 @@ class App extends React.Component {
     }
 
     handleNumberChange = (event) => {
-        this.setState({newNumber: event.target.value})
+        this.setState({ newNumber: event.target.value })
+    }
+
+    handleFilterChange = (event) => {
+        this.setState({ filter: event.target.value })
     }
 
     render() {
+        const personsToShow =
+            this.state.persons.filter(person => person.name.toLocaleLowerCase().includes(this.state.filter))
+
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
+                rajaa näytettäviä:
+                <input
+                    value={this.state.filter}
+                    onChange={this.handleFilterChange}
+                />
+                <h3>Lisää uusi</h3>
                 <form onSubmit={this.addName}>
                     nimi:
                     <input
                         value={this.state.newName}
                         onChange={this.handleNameChange}
                     />
-                    <br/>
+                    <br />
                     numero:
                     <input
                         value={this.state.newNumber}
@@ -68,7 +85,7 @@ class App extends React.Component {
                 <h2>Numerot</h2>
                 <table>
                     <tbody>
-                        {this.state.persons.map(person => <Person key={person.name} person={person} />)}
+                        {personsToShow.map(person => <Person key={person.name} person={person} />)}
                     </tbody>
                 </table>
             </div>
