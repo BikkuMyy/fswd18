@@ -33,17 +33,24 @@ class App extends React.Component {
                 return (<div></div>)
             } else if (countriesFiltered.length > 10) {
                 return (
-                    <div>
-                        <p>too many matches, specify the filter</p>
-                    </div>
+                    <div>too many matches, specify the filter</div>
                 )
             } else if (countriesFiltered.length > 1) {
                 return (
                     <div>
-                        {countriesFiltered.map(country => <p>{country.name}</p>)}
+                        {countriesFiltered.map(country => <div>{country.name}</div>)}
                     </div>
                 )
             }
+            let country = countriesFiltered[0]
+            return (
+                <div>
+                    <h2>{country.name} {country.nativeName}</h2>
+                    <div>capital: {country.capital}</div>
+                    <div>population: {country.population}</div>
+                    <img src={country.flag} alt='flag' width='500' height='350'/>
+                </div>
+            )
         }
 
         return (
