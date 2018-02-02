@@ -1,6 +1,6 @@
 import React from 'react';
 import Person from './components/Person'
-import axios from 'axios'
+import personService from './services/persons'
 
 class App extends React.Component {
     constructor(props) {
@@ -14,10 +14,10 @@ class App extends React.Component {
     }
 
     componentWillMount() {
-        axios
-            .get('http://localhost:3001/persons')
+        personService
+            .getAll()
             .then(response => {
-                this.setState({ persons: response.data})
+                this.setState({ persons: response })
             })
     }
 
@@ -33,18 +33,21 @@ class App extends React.Component {
             number: this.state.newNumber
         }
 
-        //tähän joku parempi ratkaisu?
-        const newN = this.state.newName
-        const find = this.state.persons.find(function (obj) { return obj.name === newN })
+        //jos nimi jo luettelossa, kysytään, halutaanko numero päivittää
+        const find = this.state.persons.find(p => p.name === this.state.newName)
 
         if (find === undefined) {
-            const persons = this.state.persons.concat(personObject)
+            personService
+                .create(personObject)
+                .then(newPerson => {
+                    this.setState({
+                        persons: this.state.persons.concat(newPerson),
+                        newName: '',
+                        newNumber: ''
+                    })
+                })
 
-            this.setState({
-                persons,
-                newName: '',
-                newNumber: ''
-            })
+
         } else {
             alert('Nimi käytössä, valitse toinen nimi!')
         }
@@ -56,6 +59,20 @@ class App extends React.Component {
 
     handleFilterChange = (event) => {
         this.setState({ filter: event.target.value })
+    }
+
+    removePerson = (id) => {
+        //miten varoitus toteutetaan??
+        return () => {
+            //window.confirm(`Poistetaanko', ${this.state.persons[id].name}`)
+            personService
+                .remove(id)
+                .then(response => {
+                    this.setState({
+                        persons: this.state.persons.filter(p => p.id !== id)
+                    })
+                })
+        }
     }
 
     render() {
@@ -83,13 +100,20 @@ class App extends React.Component {
                         value={this.state.newNumber}
                         onChange={this.handleNumberChange}
                     />
+                    <br />
                     <button type="submit">lisää</button>
 
                 </form>
                 <h2>Numerot</h2>
                 <table>
                     <tbody>
-                        {personsToShow.map(person => <Person key={person.name} person={person} />)}
+                        {personsToShow.map(person =>
+                            <Person
+                                key={person.name}
+                                person={person}
+                                remove={this.removePerson(person.id)}
+                            />
+                        )}
                     </tbody>
                 </table>
             </div>
