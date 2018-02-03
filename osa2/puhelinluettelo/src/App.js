@@ -25,7 +25,7 @@ class App extends React.Component {
         this.setState({ newName: event.target.value })
     }
 
-    addName = (event) => {
+    addPerson = (event) => {
         event.preventDefault()
 
         const personObject = {
@@ -33,10 +33,9 @@ class App extends React.Component {
             number: this.state.newNumber
         }
 
-        //jos nimi jo luettelossa, kysytään, halutaanko numero päivittää
-        const find = this.state.persons.find(p => p.name === this.state.newName)
+        const personToAdd = this.state.persons.find(p => p.name === this.state.newName)
 
-        if (find === undefined) {
+        if (personToAdd === undefined) {
             personService
                 .create(personObject)
                 .then(newPerson => {
@@ -46,10 +45,19 @@ class App extends React.Component {
                         newNumber: ''
                     })
                 })
-
-
         } else {
-            alert('Nimi käytössä, valitse toinen nimi!')
+            if (window.confirm(`${this.state.newName} on jo luettelossa, korvataanko vanha numero uudella?`)) {
+                personService
+                    .update(personToAdd.id, personObject)
+                    .then(updatedPerson => {
+                        this.setState({
+                            persons: this.state.persons,
+                            newName: '',
+                            newNumber: ''
+                        })
+
+                    })
+            }
         }
     }
 
@@ -61,17 +69,18 @@ class App extends React.Component {
         this.setState({ filter: event.target.value })
     }
 
-    removePerson = (id) => {
-        //miten varoitus toteutetaan??
+    removePerson = (person) => {
         return () => {
-            //window.confirm(`Poistetaanko', ${this.state.persons[id].name}`)
-            personService
-                .remove(id)
-                .then(response => {
-                    this.setState({
-                        persons: this.state.persons.filter(p => p.id !== id)
+            if (window.confirm(`Poistetaanko ${person.name}`)){
+                personService
+                    .remove(person.id)
+                    .then(response => {
+                        this.setState({
+                            persons: this.state.persons.filter(p => p.id !== person.id)
+                        })
                     })
-                })
+            }
+
         }
     }
 
@@ -88,7 +97,7 @@ class App extends React.Component {
                     onChange={this.handleFilterChange}
                 />
                 <h3>Lisää uusi</h3>
-                <form onSubmit={this.addName}>
+                <form onSubmit={this.addPerson}>
                     nimi:
                     <input
                         value={this.state.newName}
@@ -111,7 +120,7 @@ class App extends React.Component {
                             <Person
                                 key={person.name}
                                 person={person}
-                                remove={this.removePerson(person.id)}
+                                remove={this.removePerson(person)}
                             />
                         )}
                     </tbody>
