@@ -1,6 +1,7 @@
 import React from 'react';
 import Person from './components/Person'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 class App extends React.Component {
     constructor(props) {
@@ -9,7 +10,8 @@ class App extends React.Component {
             persons: [],
             newName: '',
             newNumber: '',
-            filter: ''
+            filter: '',
+            alert: null
         }
     }
 
@@ -42,21 +44,36 @@ class App extends React.Component {
                     this.setState({
                         persons: this.state.persons.concat(newPerson),
                         newName: '',
-                        newNumber: ''
+                        newNumber: '',
+                        alert: `Henkilö ${newPerson.name} lisätty!`
                     })
                 })
+            setTimeout(() => {
+                this.setState({ alert: null })
+            }, 2000)
+
         } else {
             if (window.confirm(`${this.state.newName} on jo luettelossa, korvataanko vanha numero uudella?`)) {
                 personService
                     .update(personToAdd.id, personObject)
                     .then(updatedPerson => {
+                        const persons = this.state.persons.filter(p => p.id !== personToAdd.id)
                         this.setState({
-                            persons: this.state.persons,
+                            persons: persons.concat(updatedPerson),
                             newName: '',
-                            newNumber: ''
+                            newNumber: '',
+                            alert: `Henkilön ${personToAdd.name} numero muutettu`
                         })
-
                     })
+                    .catch(error => {
+                        this.setState({
+                            alert: `Muokattavan henkilön ${personToAdd.name} tiedot on jo poistettu :/`,
+                            persons: this.state.persons.filter(p => p.id !== personToAdd.id)
+                        })
+                    })
+                setTimeout(() => {
+                    this.setState({ alert: null })
+                }, 5000)
             }
         }
     }
@@ -71,14 +88,18 @@ class App extends React.Component {
 
     removePerson = (person) => {
         return () => {
-            if (window.confirm(`Poistetaanko ${person.name}`)){
+            if (window.confirm(`Poistetaanko henkilö ${person.name}?`)) {
                 personService
                     .remove(person.id)
                     .then(response => {
                         this.setState({
-                            persons: this.state.persons.filter(p => p.id !== person.id)
+                            persons: this.state.persons.filter(p => p.id !== person.id),
+                            alert: `${person.name} poistettu`
                         })
                     })
+                setTimeout(() => {
+                    this.setState({ alert: null })
+                }, 2000)
             }
 
         }
@@ -91,6 +112,9 @@ class App extends React.Component {
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
+
+                <Notification message={this.state.alert} />
+                <br />
                 rajaa näytettäviä:
                 <input
                     value={this.state.filter}
