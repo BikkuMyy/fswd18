@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios'
+import Country from './components/Country'
 
 class App extends React.Component {
     constructor(props) {
@@ -23,14 +24,19 @@ class App extends React.Component {
         this.setState({ filter: event.target.value })
     }
 
+    handleClick = ({country}, event) => {
+        event.preventDefault()
+        this.setState({ filter: country})
+    }
+
     render() {
         const countriesToShow = () => {
-            let countriesFiltered =
+            const countriesFiltered =
                 this.state.countries
                     .filter(country => country.name.toLocaleLowerCase().includes(this.state.filter))
 
-            if (this.state.filter === '') {
-                return (<div></div>)
+            if (this.state.filter === '' || countriesFiltered.length === 0) {
+                return (<div>no results, change filter</div>)
             } else if (countriesFiltered.length > 10) {
                 return (
                     <div>too many matches, specify the filter</div>
@@ -38,7 +44,7 @@ class App extends React.Component {
             } else if (countriesFiltered.length > 1) {
                 return (
                     <div>
-                        {countriesFiltered.map(country => <div>{country.name}</div>)}
+                        {countriesFiltered.map(country => <Country key={country.name} country={country.name}/>)}
                     </div>
                 )
             }
