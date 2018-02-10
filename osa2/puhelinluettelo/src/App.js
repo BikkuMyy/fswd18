@@ -83,7 +83,7 @@ class App extends React.Component {
     }
 
     handleFilterChange = (event) => {
-        this.setState({ filter: event.target.value })
+        this.setState({ filter: event.target.value.toLocaleLowerCase() })
     }
 
     removePerson = (person) => {
@@ -107,7 +107,7 @@ class App extends React.Component {
 
     render() {
         const personsToShow =
-            this.state.persons.filter(person => person.name.toLocaleLowerCase().includes(this.state.filter))
+            this.state.persons.filter(p => p.name.toLocaleLowerCase().includes(this.state.filter))
 
         return (
             <div>
