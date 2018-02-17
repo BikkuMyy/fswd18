@@ -3,6 +3,7 @@ module.exports = {
     "es6": true,
     "node": true
   },
+  "parser": "babel-eslint",
   "extends": "eslint:recommended",
   "rules": {
     "indent": [
@@ -13,10 +14,10 @@ module.exports = {
       "error",
       "unix"
     ],
-    "quotes": [
+    /* "quotes": [
       "error",
       "single"
-    ],
+    ], */
     "semi": [
       "error",
       "never"
