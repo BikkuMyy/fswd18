@@ -1,6 +1,10 @@
 POST http://localhost:3001/api/blogs
 content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNWE4OWJlOTg3M2VlMDEyNzcxNDIyMzg3IiwiaWF0IjoxNTE4OTgzNzQ3fQ.AamQ4XwpItTPiFUDAy7UFME8xRtguKHF_dJ8zBFKNdA
 
 {
-    "author": "Nolifeverse"
+    "author": "BlaaBlaaBlaa",
+    "title": "nobodycares",
+    "url": "www.noolife.com",
+    "userId": "5a89be9873ee012771422387"
 }
