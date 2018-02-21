@@ -74,6 +74,11 @@ class App extends React.Component {
     }, 5000)
   }
 
+  updateBlog = async (blogObject, id) => {
+    //päivitetään blogi uusilla tiedoilla -> tarvitaan update blogserviceen!
+    //const updatedBlog = await blogService.
+  }
+
   render() {
 
     const loginForm = () => {
@@ -102,7 +107,10 @@ class App extends React.Component {
       <div>
         <h2>Blogs</h2>
         {this.state.blogs.map(blog =>
-          <Blog key={blog._id} blog={blog} />
+          <Blog
+            key={blog._id}
+            blog={blog}
+            updateBlog={this.updateBlog} />
         )}
       </div>
     )

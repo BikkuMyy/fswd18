@@ -8,6 +8,18 @@ class Blog extends React.Component {
     }
   }
 
+  addLike = (event) => {
+    const blog = this.props.blog
+    const blogObject = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      user: blog.user,
+      likes: blog.likes + 1
+    }
+    this.props.updateBlog(blogObject, blog._id)
+  }
+
   render() {
 
     const blogStyle = {
@@ -25,12 +37,13 @@ class Blog extends React.Component {
         <div onClick={e => this.setState({ detailVisible: !this.state.detailVisible })}>
           {this.props.blog.title} - {this.props.blog.author}
           <div style={showWhenVisible}>
-            {this.props.blog.url}
             <p>
+              <a href={this.props.blog.url}>{this.props.blog.url}</a><br/>
               {this.props.blog.likes} likes
-            <button>like</button>
+              <button onClick={this.addLike}>like</button><br />
+              added by {this.props.blog.user.name}
             </p>
-            added by 
+
           </div>
         </div>
       </div>
