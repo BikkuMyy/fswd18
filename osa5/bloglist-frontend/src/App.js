@@ -1,9 +1,9 @@
 import React from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +13,7 @@ class App extends React.Component {
       ['username']: '',
       ['password']: '',
       user: null,
-      error: null
+      alert: null
     }
   }
 
@@ -22,9 +22,9 @@ class App extends React.Component {
       this.setState({ blogs })
     )
     const loggedUser = window.localStorage.getItem('loggedBloglistUser')
-    if (loggedUser){
+    if (loggedUser) {
       const user = JSON.parse(loggedUser)
-      this.setState({user})
+      this.setState({ user })
       blogService.setToken(user.token)
     }
   }
@@ -41,10 +41,10 @@ class App extends React.Component {
       this.setState({ username: '', password: '', user })
     } catch (exception) {
       this.setState({
-        error: 'väärä käyttäjätunnus tai salasana'
+        alert: 'väärä käyttäjätunnus tai salasana'
       })
       setTimeout(() => {
-        this.setState({ error: null })
+        this.setState({ alert: null })
       }, 5000)
     }
   }
@@ -53,12 +53,23 @@ class App extends React.Component {
     event.preventDefault()
     blogService.setToken(null)
     window.localStorage.removeItem('loggedBloglistUser')
-    this.setState({user: null})
+    this.setState({ user: null })
   }
 
   handleLoginFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
     console.log(event.target.value)
+  }
+
+  addNewBlog = async (blogObject) => {
+    const newBlog = await blogService.create(blogObject)
+    this.setState({
+      blogs: this.state.blogs.concat(newBlog),
+      alert: `Lisätty ${newBlog.title}, tekijä ${newBlog.author} `
+    })
+    setTimeout(() => {
+      this.setState({ alert: null })
+    }, 5000)
   }
 
   render() {
@@ -98,16 +109,18 @@ class App extends React.Component {
       </div>
     )
 
-    return(
+    return (
       <div>
         <h1>Blogilista</h1>
-        <Notification message={this.state.error}/>
-        {this.state.user === null ? 
-          loginForm() : 
+        <Notification message={this.state.alert} />
+        {this.state.user === null ?
+          loginForm() :
           <div>
-            <p>{this.state.user.name} kirjautunut sisään </p>
-            <button onClick={this.logout}>Kirjaudu ulos</button>
-          {blogList()}
+            <p>{this.state.user.name} kirjautunut sisään
+              <button onClick={this.logout}>Kirjaudu ulos</button>
+            </p>
+            <BlogForm addNewBlog={this.addNewBlog}/>
+            {blogList()}
           </div>
         }
       </div>
