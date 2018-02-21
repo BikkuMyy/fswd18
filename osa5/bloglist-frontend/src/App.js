@@ -2,6 +2,7 @@ import React from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -13,7 +14,8 @@ class App extends React.Component {
       ['username']: '',
       ['password']: '',
       user: null,
-      alert: null
+      alert: null,
+      loginVisible: false
     }
   }
 
@@ -73,32 +75,28 @@ class App extends React.Component {
   }
 
   render() {
-    const loginForm = () => (
-      <div>
-        <h2>Kirjaudu</h2>
-        <form onSubmit={this.login}>
-          <div>
-            käyttäjätunnus:
-              <input
-              type='text'
-              name='username'
-              value={this.state.username}
-              onChange={this.handleLoginFieldChange}
-            />
+
+    const loginForm = () => {
+      const hideWhenVisible = { display: this.state.loginVisible ? 'none' : '' }
+      const showWhenVisible = { display: this.state.loginVisible ? '' : 'none' }
+
+      return (
+        <div>
+          <div style={hideWhenVisible}>
+            <button onClick={e => this.setState({ loginVisible: true })}>kirjaudu</button>
           </div>
-          <div>
-            salasana:
-                <input
-              type='password'
-              name='password'
-              value={this.state.password}
-              onChange={this.handleLoginFieldChange}
+          <div style={showWhenVisible}>
+            <LoginForm
+              username={this.state.username}
+              password={this.state.password}
+              handleChange={this.handleLoginFieldChange}
+              handleSubmit={this.login}
             />
+            <button onClick={e => this.setState({ loginVisible: false })}>Peruuta</button>
           </div>
-          <button type='submit'>Kirjaudu</button>
-        </form>
-      </div>
-    )
+        </div>
+      )
+    }
 
     const blogList = () => (
       <div>
@@ -119,7 +117,7 @@ class App extends React.Component {
             <p>{this.state.user.name} kirjautunut sisään
               <button onClick={this.logout}>Kirjaudu ulos</button>
             </p>
-            <BlogForm addNewBlog={this.addNewBlog}/>
+            <BlogForm addNewBlog={this.addNewBlog} />
             {blogList()}
           </div>
         }
