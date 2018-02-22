@@ -38,9 +38,11 @@ class App extends React.Component {
         username: this.state.username,
         password: this.state.password
       })
+
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
       blogService.setToken(user.token)
       this.setState({ username: '', password: '', user })
+
     } catch (exception) {
       this.setState({
         alert: 'väärä käyttäjätunnus tai salasana'
@@ -75,8 +77,21 @@ class App extends React.Component {
   }
 
   updateBlog = async (blogObject, id) => {
-    //päivitetään blogi uusilla tiedoilla -> tarvitaan update blogserviceen!
-    //const updatedBlog = await blogService.
+    const updatedBlog = await blogService.update(id, blogObject)
+    const blogs = this.state.blogs.filter(b => b.id !== id)
+    this.setState({ blogs: blogs.concat(updatedBlog) })
+  }
+
+  deleteBlog = async (id) => {
+    const response = await blogService.remove(id)
+    this.setState({
+      blogs: this.state.blogs.filter(b => b.id !== id),
+      alert: 'blogi poistettu'
+    })
+    setTimeout(() => {
+      this.setState({ alert: null })
+    }, 5000)
+
   }
 
   render() {
@@ -104,14 +119,22 @@ class App extends React.Component {
     }
 
     const blogList = () => (
+      
       <div>
         <h2>Blogs</h2>
-        {this.state.blogs.map(blog =>
-          <Blog
-            key={blog._id}
-            blog={blog}
-            updateBlog={this.updateBlog} />
-        )}
+        {this.state.blogs
+          .sort(function (a, b) {
+            return b.likes - a.likes
+          })
+          .map(blog =>
+            <Blog
+              key={blog._id}
+              blog={blog}
+              updateBlog={this.updateBlog}
+              deleteBlog={this.deleteBlog}
+              deleteIsVisible={this.state.user.id === blog.user.id ? true : false}
+            />
+          )}
       </div>
     )
 

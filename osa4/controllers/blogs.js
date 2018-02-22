@@ -20,6 +20,7 @@ const getTokenFrom = (request) => {
 }
 
 blogsRouter.post('/', async (request, response) => {
+  //where to populate new blog??
   try {
     const token = getTokenFrom(request)
     const decodedToken = jwt.verify(token, process.env.SECRET)
@@ -56,7 +57,6 @@ blogsRouter.post('/', async (request, response) => {
       console.log(exception)
       response.status(500).json({ error: 'sth went wrong' })
     }
-
   }
 })
 
@@ -70,7 +70,7 @@ blogsRouter.delete('/:id', async (request, response) => {
       return response.status(401).json({ error: 'token missing or invalid' })
     }
 
-    if (blog.user.toString() === decodedToken.id) {
+    if (blog.user.toString() === decodedToken.id || !blog.user) {
       await Blog.findByIdAndRemove(request.params.id)
       response.status(204).end()
     } else {
@@ -94,11 +94,15 @@ blogsRouter.put('/:id', async (request, response) => {
       title: body.title,
       author: body.author,
       url: body.url,
-      likes: body.likes
+      likes: body.likes,
+      user: body.user
     }
 
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+    const updatedBlog = await Blog
+      .findByIdAndUpdate(request.params.id, blog, { new: true })
+      .populate('user', { username: 1, name: 1 })
     response.status(201).json(Blog.format(updatedBlog))
+
   } catch (exception) {
     console.log(exception)
     response.status(400).send(({ error: 'malformatted id' }))
