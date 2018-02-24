@@ -1,5 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createStore } from 'redux'
+import counterReducer from './reducer'
+
+const store = createStore(counterReducer)
 
 class App extends React.Component {
     constructor(props) {
@@ -27,15 +31,15 @@ class App extends React.Component {
                 <Header text="Anna palautetta" />
                 <div>
                     <Button
-                        handleClick={this.annaPalaute(1)}
+                        handleClick={e => store.dispatch({ type: "GOOD" })}
                         text="hyvä"
                     />
                     <Button
-                        handleClick={this.annaPalaute(0)}
+                        handleClick={e => store.dispatch({ type: "OK" })}
                         text="neutraali"
                     />
                     <Button
-                        handleClick={this.annaPalaute(-1)}
+                        handleClick={e => store.dispatch({ type: "BAD" })}
                         text="huono"
                     />
                 </div>
@@ -55,17 +59,17 @@ const Button = ({ handleClick, text }) => (
 )
 
 const Statistics = ({ state }) => {
-    if (state.kaikki.length === 0) {
-        return (
-            <div> ei yhtään palautetta annettu </div>
-        )
-    }
 
     const laskeKeskiarvo = () => {
         let summa = 0
         state.kaikki.forEach(luku => {
             summa += luku
         })
+        if (summa === 0) {
+            return (
+                <div>0</div>
+            )
+        }
         return (
             <div>
                 {summa / state.kaikki.length}
@@ -80,6 +84,11 @@ const Statistics = ({ state }) => {
                 lkm++
             }
         })
+        if (lkm === 0) {
+            return (
+                <div>0</div>
+            )
+        }
         return (
             <div>
                 {lkm / state.kaikki.length}
@@ -91,9 +100,9 @@ const Statistics = ({ state }) => {
         <div>
             <table>
                 <tbody>
-                    <Statistic name="hyvä" value={state.palaute[2]} />
-                    <Statistic name="neutraali" value={state.palaute[1]} />
-                    <Statistic name="huono" value={state.palaute[0]} />
+                    <Statistic name="hyvä" value={store.getState().good} />
+                    <Statistic name="neutraali" value={store.getState().ok} />
+                    <Statistic name="huono" value={store.getState().bad} />
                     <Statistic name="keskiarvo" value={laskeKeskiarvo()} />
                     <Statistic name="positiivisia" value={laskePositiiviset()} />
                 </tbody>
@@ -111,4 +120,10 @@ const Statistic = ({ name, value }) => {
     )
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const renderApp = () => {
+    ReactDOM.render(<App />, document.getElementById('root'));
+}
+
+renderApp()
+store.subscribe(renderApp)
+
