@@ -83,7 +83,7 @@ class App extends React.Component {
   }
 
   deleteBlog = async (id) => {
-    const response = await blogService.remove(id)
+    await blogService.remove(id)
     this.setState({
       blogs: this.state.blogs.filter(b => b.id !== id),
       alert: 'blogi poistettu'
@@ -102,10 +102,10 @@ class App extends React.Component {
 
       return (
         <div>
-          <div style={hideWhenVisible}>
+          <div className ='noUser' style={hideWhenVisible}>
             <button onClick={e => this.setState({ loginVisible: true })}>kirjaudu</button>
           </div>
-          <div style={showWhenVisible}>
+          <div className='login' style={showWhenVisible}>
             <LoginForm
               username={this.state.username}
               password={this.state.password}
@@ -132,7 +132,12 @@ class App extends React.Component {
               blog={blog}
               updateBlog={this.updateBlog}
               deleteBlog={this.deleteBlog}
-              deleteIsVisible={this.state.user.id === blog.user.id ? true : false}
+              deleteIsVisible={
+                blog.user === null ||
+                this.state.user.username === blog.user.username
+                ? true : false
+              }
+
             />
           )}
       </div>

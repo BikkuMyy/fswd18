@@ -40,24 +40,25 @@ class Blog extends React.Component {
 
     const showDetails = { display: this.state.detailVisible ? '' : 'none' }
     const showDelete = { display: this.state.deleteVisible ? '' : 'none' }
-    console.log(this.state.deleteVisible)
 
     return (
       <div style={blogStyle}>
-        <div onClick={e => this.setState({ detailVisible: !this.state.detailVisible })}>
+        <div className='info' onClick={e => this.setState({ detailVisible: !this.state.detailVisible })}>
           {this.props.blog.title} - {this.props.blog.author}
-          <div style={showDetails}>
-            <p>
-              <a href={this.props.blog.url}>{this.props.blog.url}</a><br />
-              {this.props.blog.likes} likes
-              <button onClick={this.addLike}>like</button><br />
-              added by {this.props.blog.user.name}<br />
-              <button onClick={this.delete} style={showDelete}>
-                delete
-              </button>
-            </p>
-          </div>
         </div>
+        <div className='detail' style={showDetails}>
+          <p>
+            <a href={this.props.blog.url}>{this.props.blog.url}</a><br />
+            {this.props.blog.likes} likes
+              <button onClick={this.addLike}>like</button><br />
+            added by {this.props.blog.user !== null ? this.props.blog.user.name : 'anonymous'
+            }<br />
+            <button onClick={this.delete} style={showDelete}>
+              delete
+              </button>
+          </p>
+        </div>
+
       </div>
     )
   }
