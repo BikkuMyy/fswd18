@@ -46,7 +46,6 @@ describe.only(<App />, () => {
       app.update()
 
       const blogComponents = app.find(Blog)
-      console.log(app.debug())
       expect(blogComponents.length).toEqual(blogService.blogs.length)
     })
   })
