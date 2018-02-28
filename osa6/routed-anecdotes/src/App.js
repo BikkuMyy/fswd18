@@ -1,14 +1,15 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, Redirect, NavLink } from 'react-router-dom'
 
 const Menu = ({ state, addNew, anecdoteById }) => (
+
   <div>
     <Router>
       <div>
-        <div>
-          <Link to="/">anecdotes</Link>&nbsp;
-          <Link to="/create">create new</Link>&nbsp;
-          <Link to="/about">about</Link>&nbsp;
+        <div style={menuStyle}>
+          <NavLink exact to="/" activeStyle={selected}>anecdotes </NavLink>&nbsp;
+          <NavLink to="/create" activeStyle={selected}>create new</NavLink>&nbsp;
+          <NavLink to="/about" activeStyle={selected}>about</NavLink>&nbsp;
         </div>
         <Route exact path="/" render={() =>
           <div>
@@ -17,10 +18,10 @@ const Menu = ({ state, addNew, anecdoteById }) => (
           </div>
         }
         />
-        <Route path="/create" render={() => 
+        <Route path="/create" render={() =>
           state.notification
-          ? <Redirect to="/"/>
-          : <CreateNew addNew={addNew} />} />
+            ? <Redirect to="/" />
+            : <CreateNew addNew={addNew} />} />
         <Route path="/about" render={() => <About />} />
         <Route exact path="/anecdotes/:id" render={({ match }) =>
           <SingleAnecdote anecdote={anecdoteById(match.params.id)} />}
@@ -30,11 +31,32 @@ const Menu = ({ state, addNew, anecdoteById }) => (
   </div>
 )
 
+const menuStyle = {
+  color: 'purple',
+  background: 'paleturquoise',
+  padding: 10,
+  marginBottom: 10,
+  fontSize: 15
+}
+
+const selected = {
+  color: 'purple',
+  borderStyle: 'solid',
+  borderRadius: 5,
+  padding: 10,
+  marginBottom: 10,
+  fontSize: 20
+}
+
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote =>
+        <li key={anecdote.id} >
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
+      )}
     </ul>
   </div>
 )
@@ -53,9 +75,25 @@ const SingleAnecdote = ({ anecdote }) => {
 }
 
 const Notification = ({ message }) => {
-  return (
-    <p>{message}</p>
-  )
+  const notificationStyle = {
+    color: 'purple',
+    background: 'paleturquoise',
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    fontSize: 15
+  }
+  if (message) {
+    return (
+      <div style={notificationStyle}>{message}</div>
+    )
+  } else {
+    return (
+      <div></div>
+    )
+  }
+
 }
 
 const About = () => (
@@ -167,7 +205,7 @@ class App extends React.Component {
       notification: `a new anecdote ${anecdote.content} created!`
     })
     setTimeout(() => {
-      this.setState({ notification: ''})
+      this.setState({ notification: '' })
     }, 10000)
   }
 
