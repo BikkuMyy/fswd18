@@ -1,10 +1,11 @@
 import React from 'react'
-import {updateFilter} from '../reducers/filterReducer'
+import { connect } from 'react-redux'
+import { updateFilter } from '../reducers/filterReducer'
 
 class Filter extends React.Component {
 
   handleChange = (event) => {
-    this.props.store.dispatch(updateFilter(event.target.value))
+    this.props.updateFilter(event.target.value)
   }
 
   render() {
@@ -14,13 +15,22 @@ class Filter extends React.Component {
 
     return (
       <div style={style}>
-        filter:  
-        <input 
-        value={this.props.store.getState().filter} 
-        onChange={this.handleChange} />
+        filter:
+        <input
+          value={this.props.filter}
+          onChange={this.handleChange} />
       </div>
     )
   }
 }
 
-export default Filter
+const mapStateToProps = (store) => {
+  return {
+    filter: store.filter
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  { updateFilter }
+)(Filter)

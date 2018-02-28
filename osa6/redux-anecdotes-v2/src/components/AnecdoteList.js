@@ -1,39 +1,49 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { vote } from '../reducers/anecdoteReducer'
 import Filter from '../components/Filter'
 
 class AnecdoteList extends React.Component {
+
   render() {
-    const filter = this.props.store.getState().filter
-    const anecdotes = this.props.store
-      .getState().anecdotes
-      .filter(a => a.content
-        .toLocaleLowerCase()
-        .includes(filter.toLocaleLowerCase()))
     return (
       <div>
         <h2>Anecdotes</h2>
-
-        <Filter store={this.props.store} />
-
-        {anecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
-          <div key={anecdote.id}>
-            <div>
-              {anecdote.content}
+        <Filter />
+        {this.props.filteredAnecdotes
+          .sort((a, b) => b.votes - a.votes)
+          .map(anecdote =>
+            <div key={anecdote.id}>
+              <div>
+                {anecdote.content}
+              </div>
+              <div>
+                has {anecdote.votes}
+                <button onClick={() => this.props.vote(anecdote.id)}>
+                  vote
+                </button>
+              </div>
             </div>
-            <div>
-              has {anecdote.votes}
-              <button onClick={() =>
-                this.props.store.dispatch(vote(anecdote.id))
-              }>
-                vote
-              </button>
-            </div>
-          </div>
-        )}
+          )}
       </div>
     )
   }
 }
 
-export default AnecdoteList
+const anecdotesToShow = (anecdotes, filter) => {
+  return anecdotes
+    .filter(a => a.content
+      .toLocaleLowerCase()
+      .includes(filter.toLocaleLowerCase()))
+}
+
+const mapStateToProps = (store) => {
+  return {
+    filteredAnecdotes: anecdotesToShow(store.anecdotes, store.filter)
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  { vote }
+)(AnecdoteList)
