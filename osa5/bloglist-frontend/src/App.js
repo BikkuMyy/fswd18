@@ -5,6 +5,8 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { connect } from 'react-redux'
+import { notify } from './reducers/notificationReducer'
 
 class App extends React.Component {
   constructor(props) {
@@ -20,6 +22,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    //this.props.blogInit()
     blogService.getAll().then(blogs =>
       this.setState({ blogs })
     )
@@ -44,12 +47,7 @@ class App extends React.Component {
       this.setState({ username: '', password: '', user })
 
     } catch (exception) {
-      this.setState({
-        alert: 'väärä käyttäjätunnus tai salasana'
-      })
-      setTimeout(() => {
-        this.setState({ alert: null })
-      }, 5000)
+      this.props.notify('väärä käyttäjätunnus tai salasana', 5)
     }
   }
 
@@ -69,11 +67,8 @@ class App extends React.Component {
     const newBlog = await blogService.create(blogObject)
     this.setState({
       blogs: this.state.blogs.concat(newBlog),
-      alert: `Lisätty ${newBlog.title}, tekijä ${newBlog.author} `
     })
-    setTimeout(() => {
-      this.setState({ alert: null })
-    }, 5000)
+    this.props.notify(`Lisätty ${newBlog.title}, tekijä ${newBlog.author}`, 5)
   }
 
   updateBlog = async (blogObject, id) => {
@@ -86,12 +81,8 @@ class App extends React.Component {
     await blogService.remove(id)
     this.setState({
       blogs: this.state.blogs.filter(b => b.id !== id),
-      alert: 'blogi poistettu'
     })
-    setTimeout(() => {
-      this.setState({ alert: null })
-    }, 5000)
-
+    this.props.notify('blogi poistettu', 5)
   }
 
   render() {
@@ -102,7 +93,7 @@ class App extends React.Component {
 
       return (
         <div>
-          <div className ='noUser' style={hideWhenVisible}>
+          <div className='noUser' style={hideWhenVisible}>
             <button onClick={e => this.setState({ loginVisible: true })}>kirjaudu</button>
           </div>
           <div className='login' style={showWhenVisible}>
@@ -119,7 +110,7 @@ class App extends React.Component {
     }
 
     const blogList = () => (
-      
+
       <div>
         <h2>Blogs</h2>
         {this.state.blogs
@@ -134,8 +125,8 @@ class App extends React.Component {
               deleteBlog={this.deleteBlog}
               deleteIsVisible={
                 blog.user === null ||
-                this.state.user.username === blog.user.username
-                ? true : false
+                  this.state.user.username === blog.user.username
+                  ? true : false
               }
 
             />
@@ -162,4 +153,7 @@ class App extends React.Component {
   }
 }
 
-export default App;
+//export default App
+export default connect(
+  null, { notify }
+)(App)

@@ -1,4 +1,7 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { notify } from '../reducers/notificationReducer'
+import { newBlog } from '../reducers/blogReducer'
 
 class BlogForm extends React.Component {
   constructor(props) {
@@ -8,6 +11,17 @@ class BlogForm extends React.Component {
       ['author']: '',
       ['url']: ''
     }
+  }
+
+  handleSubmit = async (event) => {
+    event.preventDefault()
+    const newBlog = {
+      title: event.target.title.value,
+      author: event.target.author.value,
+      url: event.target.url.value
+    }
+    this.props.newBlog(newBlog)
+    this.props.notify(`Lisätty ${newBlog.title}, tekijä ${newBlog.author}`)
   }
 
   createBlog = (event) => {
@@ -68,4 +82,10 @@ class BlogForm extends React.Component {
   }
 }
 
-export default BlogForm
+export default connect(
+  null,
+  {
+    newBlog,
+    notify
+  }
+)(BlogForm)

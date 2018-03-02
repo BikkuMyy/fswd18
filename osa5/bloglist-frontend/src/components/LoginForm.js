@@ -17,7 +17,7 @@ const LoginForm = ({ username, password, handleChange, handleSubmit }) => {
         </div>
         <div>
           salasana:
-            <input
+          <input
             type='password'
             name='password'
             value={password}
