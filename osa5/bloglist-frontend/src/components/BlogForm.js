@@ -13,17 +13,6 @@ class BlogForm extends React.Component {
     }
   }
 
-  handleSubmit = async (event) => {
-    event.preventDefault()
-    const newBlog = {
-      title: event.target.title.value,
-      author: event.target.author.value,
-      url: event.target.url.value
-    }
-    this.props.newBlog(newBlog)
-    this.props.notify(`Lisätty ${newBlog.title}, tekijä ${newBlog.author}`)
-  }
-
   createBlog = (event) => {
     event.preventDefault()
 
@@ -39,7 +28,8 @@ class BlogForm extends React.Component {
       url: ''
     })
 
-    this.props.addNewBlog(blogObject)
+    this.props.newBlog(blogObject)
+    this.props.notify(`Lisätty ${blogObject.title}, tekijä ${blogObject.author}`, 5)
   }
 
   handleFormFieldChange = (event) => {

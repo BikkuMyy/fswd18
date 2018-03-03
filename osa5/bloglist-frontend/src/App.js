@@ -3,10 +3,14 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import UserList from './components/UserList'
+import BlogList from './components/BlogList'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { connect } from 'react-redux'
 import { notify } from './reducers/notificationReducer'
+import { userInit } from './reducers/userReducer'
+import { blogInit } from './reducers/blogReducer'
 
 class App extends React.Component {
   constructor(props) {
@@ -16,16 +20,14 @@ class App extends React.Component {
       ['username']: '',
       ['password']: '',
       user: null,
-      alert: null,
       loginVisible: false
     }
   }
 
   componentDidMount() {
-    //this.props.blogInit()
-    blogService.getAll().then(blogs =>
-      this.setState({ blogs })
-    )
+    this.props.blogInit()
+    //this.props.userInit()
+
     const loggedUser = window.localStorage.getItem('loggedBloglistUser')
     if (loggedUser) {
       const user = JSON.parse(loggedUser)
@@ -63,27 +65,6 @@ class App extends React.Component {
     console.log(event.target.value)
   }
 
-  addNewBlog = async (blogObject) => {
-    const newBlog = await blogService.create(blogObject)
-    this.setState({
-      blogs: this.state.blogs.concat(newBlog),
-    })
-    this.props.notify(`Lisätty ${newBlog.title}, tekijä ${newBlog.author}`, 5)
-  }
-
-  updateBlog = async (blogObject, id) => {
-    const updatedBlog = await blogService.update(id, blogObject)
-    const blogs = this.state.blogs.filter(b => b.id !== id)
-    this.setState({ blogs: blogs.concat(updatedBlog) })
-  }
-
-  deleteBlog = async (id) => {
-    await blogService.remove(id)
-    this.setState({
-      blogs: this.state.blogs.filter(b => b.id !== id),
-    })
-    this.props.notify('blogi poistettu', 5)
-  }
 
   render() {
 
@@ -109,7 +90,7 @@ class App extends React.Component {
       )
     }
 
-    const blogList = () => (
+/*     const blogList = () => (
 
       <div>
         <h2>Blogs</h2>
@@ -128,16 +109,15 @@ class App extends React.Component {
                   this.state.user.username === blog.user.username
                   ? true : false
               }
-
             />
           )}
       </div>
-    )
+    ) */
 
     return (
       <div>
         <h1>Blogilista</h1>
-        <Notification message={this.state.alert} />
+        <Notification />
         {this.state.user === null ?
           loginForm() :
           <div>
@@ -145,9 +125,10 @@ class App extends React.Component {
               <button onClick={this.logout}>Kirjaudu ulos</button>
             </p>
             <BlogForm addNewBlog={this.addNewBlog} />
-            {blogList()}
+            <BlogList />
           </div>
         }
+        {/* <UserList /> */}
       </div>
     )
   }
@@ -155,5 +136,5 @@ class App extends React.Component {
 
 //export default App
 export default connect(
-  null, { notify }
+  null, { notify, userInit, blogInit }
 )(App)

@@ -1,11 +1,13 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { deleteBlog, likeBlog } from '../reducers/blogReducer'
 
 class Blog extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       detailVisible: false,
-      deleteVisible: this.props.deleteIsVisible
+      deleteVisible: true
     }
   }
 
@@ -18,7 +20,8 @@ class Blog extends React.Component {
       user: blog.user,
       likes: blog.likes + 1
     }
-    this.props.updateBlog(blogObject, blog.id)
+
+    this.props.likeBlog(blog.id, blogObject)
   }
 
   delete = () => {
@@ -50,12 +53,12 @@ class Blog extends React.Component {
           <p>
             <a href={this.props.blog.url}>{this.props.blog.url}</a><br />
             {this.props.blog.likes} likes
-              <button onClick={this.addLike}>like</button><br />
-            added by {this.props.blog.user !== null ? this.props.blog.user.name : 'anonymous'
-            }<br />
+            <button onClick={this.addLike}>like</button><br />
+            {/* added by {this.props.blog.user !== null ? this.props.blog.user.name : 'anonymous'} */}
+            <br />
             <button onClick={this.delete} style={showDelete}>
               delete
-              </button>
+            </button>
           </p>
         </div>
 
@@ -63,4 +66,7 @@ class Blog extends React.Component {
     )
   }
 }
-export default Blog
+export default connect(
+  null,
+  { deleteBlog, likeBlog }
+)(Blog)
