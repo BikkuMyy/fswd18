@@ -4,6 +4,7 @@ import blogService from '../services/blogs'
 import { notify } from '../reducers/notificationReducer'
 import { connect } from 'react-redux'
 import { setLoggedUser } from '../reducers/loginReducer'
+import { Form, Button } from 'semantic-ui-react'
 
 class LoginForm extends React.Component {
   constructor(props) {
@@ -35,7 +36,6 @@ class LoginForm extends React.Component {
 
   handleFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
-    console.log(event.target.value)
   }
 
   render() {
@@ -46,32 +46,32 @@ class LoginForm extends React.Component {
     return (
       <div>
         <div className='noUser' style={hideWhenVisible}>
-          <button onClick={e => this.setState({ loginVisible: true })}>kirjaudu</button>
+          <Button onClick={e => this.setState({ loginVisible: true })}>kirjaudu</Button>
         </div>
         <div className='login' style={showWhenVisible}>
           <h2>Kirjaudu</h2>
-          <form onSubmit={this.login}>
-            <div>
-              käyttäjätunnus:
+          <Form onSubmit={this.login}>
+            <Form.Field>
+              <label>Käyttäjätunnus</label>
               <input
                 type='text'
                 name='username'
                 value={this.state.username}
                 onChange={this.handleFieldChange}
               />
-            </div>
-            <div>
-              salasana:
+            </Form.Field>
+            <Form.Field>
+              <label>Salasana</label>
               <input
                 type='password'
                 name='password'
                 value={this.state.password}
                 onChange={this.handleFieldChange}
               />
-            </div>
-            <button type='submit'>Kirjaudu</button>
-          </form>
-          <button onClick={e => this.setState({ loginVisible: false })}>Peruuta</button>
+            </Form.Field>
+            <Button type='submit'>Kirjaudu</Button>
+          </Form>
+          <Button onClick={e => this.setState({ loginVisible: false })}>Peruuta</Button>
         </div>
       </div>
     )

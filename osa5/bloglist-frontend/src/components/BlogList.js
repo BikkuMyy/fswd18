@@ -1,18 +1,26 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Blog from '../components/Blog'
+import { Segment, List } from 'semantic-ui-react'
 
 class BlogList extends React.Component {
   render() {
-    console.log(this.props.blogs)
     return (
       <div>
         <h2>Blogs</h2>
-        {this.props.blogs
-          .sort(function (a, b) {
-            return b.likes - a.likes
-          })
-          .map(blog => <Blog key={blog._id} blog={blog}/>)}
+        <Segment>
+          <List divided relaxed>
+            {this.props.blogs
+              .sort(function (a, b) {
+                return b.likes - a.likes
+              })
+              .map(blog =>
+                <List.Item key={blog._id}>
+                  <Blog blog={blog} />
+                </List.Item>
+              )}
+          </List>
+        </Segment>
       </div>
     )
   }

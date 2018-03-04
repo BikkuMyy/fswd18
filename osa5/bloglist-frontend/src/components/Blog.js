@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { deleteBlog, likeBlog } from '../reducers/blogReducer'
+import { List, Button } from 'semantic-ui-react'
 
 class Blog extends React.Component {
   constructor(props) {
@@ -33,36 +34,29 @@ class Blog extends React.Component {
 
   render() {
 
-    const blogStyle = {
-      paddingTop: 10,
-      paddingLeft: 2,
-      border: 'solid',
-      borderWidth: 1,
-      marginBottom: 5
-    }
-
     const showDetails = { display: this.state.detailVisible ? '' : 'none' }
     const showDelete = { display: this.state.deleteVisible ? '' : 'none' }
 
     return (
-      <div style={blogStyle}>
-        <div className='info' onClick={e => this.setState({ detailVisible: !this.state.detailVisible })}>
-          {this.props.blog.title} - {this.props.blog.author}
+      <List.Content>
+        <div>
+          <div className='info' onClick={e => this.setState({ detailVisible: !this.state.detailVisible })}>
+            <List.Header>{this.props.blog.title} - {this.props.blog.author}</List.Header>
+          </div>
+          <div className='detail' style={showDetails}>
+            <p>
+              <a href={this.props.blog.url}>{this.props.blog.url}</a><br />
+              {this.props.blog.likes} likes &nbsp;
+              <Button onClick={this.addLike}>like </Button><br />
+              added by {this.props.blog.user !== null ? this.props.blog.user.name : 'anonymous'}
+              <br />
+              <Button onClick={this.delete} style={showDelete}>
+                delete
+              </Button>
+            </p>
+          </div>
         </div>
-        <div className='detail' style={showDetails}>
-          <p>
-            <a href={this.props.blog.url}>{this.props.blog.url}</a><br />
-            {this.props.blog.likes} likes
-            <button onClick={this.addLike}>like</button><br />
-            {/* added by {this.props.blog.user !== null ? this.props.blog.user.name : 'anonymous'} */}
-            <br />
-            <button onClick={this.delete} style={showDelete}>
-              delete
-            </button>
-          </p>
-        </div>
-
-      </div>
+      </List.Content>
     )
   }
 }

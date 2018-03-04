@@ -1,25 +1,28 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Table } from 'semantic-ui-react'
 
 class UserList extends React.Component {
   render() {
     return (
       <div>
         <h2>Users</h2>
-        <table>
-          <tbody>
-            <tr>
-              <th/>
-              <th>blogeja</th>
-            </tr>
+        <Table>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell />
+              <Table.HeaderCell>blogeja</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
             {this.props.users.map(user =>
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.blogs.length}</td>
-              </tr>
+              <Table.Row key={user.id}>
+                <Table.Cell><a href={`/users/${user.id}`}>{user.name}</a></Table.Cell>
+                <Table.Cell>{user.blogs.length}</Table.Cell>
+              </Table.Row>
             )}
-          </tbody>
-        </table>
+          </Table.Body>
+        </Table>
       </div>
     )
   }

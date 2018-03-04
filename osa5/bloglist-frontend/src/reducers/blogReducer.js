@@ -6,7 +6,7 @@ const blogReducer = (store = [], action) => {
       return store.filter(b => b.id !== action.id)
     case 'CREATE':
       return [...store, action.data]
-    case 'INIT':
+    case 'INIT_BLOGS':
       return action.data
     case 'LIKE':
       const old = store.filter(b => b.id !== action.data.id)
@@ -19,10 +19,9 @@ export const blogInit = () => {
   return async (dispatch) => {
     const blogs = await blogService.getAll()
     dispatch({
-      type: 'INIT',
+      type: 'INIT_BLOGS',
       data: blogs
     })
-
   }
 }
 

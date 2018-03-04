@@ -7,3 +7,20 @@
   margin-bottom: 10px;
   font-size: 15px;
 }
+
+.menu {
+  color: purple;
+  background: paleturquoise;
+  padding: 10;
+  margin-bottom: 10;
+  font-size: 20;
+}
+
+.selected {
+  color: purple;
+  border-style: solid;
+  border-radius: 5;
+  padding: 10;
+  margin-bottom: 10;
+  font-size: 25;
+}
