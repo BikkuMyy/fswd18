@@ -185,28 +185,7 @@ class CreateNew extends React.Component {
         </Form.Field>
         <Button type="submit">Create</Button>
       </Form>
-
-      /* return (
-        <div>
-          <h2>create a new anecdote</h2>
-          <form onSubmit={this.handleSubmit}>
-            <div>
-              content
-              <input name='content' value={this.state.content} onChange={this.handleChange} />
-            </div>
-            <div>
-              author
-              <input name='author' value={this.state.author} onChange={this.handleChange} />
-            </div>
-            <div>
-              url for more info
-              <input name='info' value={this.state.info} onChange={this.handleChange} />
-            </div>
-            <button>create</button>
-          </form>
-        </div> */
     )
-
   }
 }
 
