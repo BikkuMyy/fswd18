@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Link, Redirect, NavLink } from 'react-router-dom'
+import { Container, Table, Grid, Button, Form } from 'semantic-ui-react'
 
 const Menu = ({ state, addNew, anecdoteById }) => (
 
@@ -51,13 +52,20 @@ const selected = {
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map(anecdote =>
-        <li key={anecdote.id} >
-          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-        </li>
-      )}
-    </ul>
+    <Table celled>
+      <Table.Body>
+        {anecdotes.map(anecdote =>
+          <Table.Row key={anecdote.id} >
+            <Table.Cell>
+              <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+            </Table.Cell>
+            <Table.Cell>
+              {anecdote.author}
+            </Table.Cell>
+          </Table.Row>
+        )}
+      </Table.Body>
+    </Table>
   </div>
 )
 
@@ -67,7 +75,7 @@ const SingleAnecdote = ({ anecdote }) => {
       <h2>{anecdote.content} by {anecdote.author}</h2>
       <p>has {anecdote.votes} votes</p>
       <p>
-        for more info see
+        for more info see:
         <a href={anecdote.info}>{anecdote.info}</a>
       </p>
     </div>
@@ -99,14 +107,26 @@ const Notification = ({ message }) => {
 const About = () => (
   <div>
     <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
+    <Grid divided="vertically">
+      <Grid.Row columns={2}>
+        <Grid.Column width={11}>
+          <p>According to Wikipedia:</p>
 
-    <em>An anecdote is a brief, revealing account of an individual person or an incident.
-      Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
-      such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
-      An anecdote is "a story with a point."</em>
+          <em>An anecdote is a brief, revealing account of an individual person or an incident.
+          Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
+          such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
+          An anecdote is "a story with a point."</em>
 
-    <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+          <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+        </Grid.Column>
+        <Grid.Column width={5}>
+          <img src='https://upload.wikimedia.org/wikipedia/commons/a/a4/Ada_Lovelace_portrait.jpg'
+            width="150"
+            height="200"
+          />
+        </Grid.Column>
+      </Grid.Row>
+    </Grid>
   </div>
 )
 
@@ -150,24 +170,41 @@ class CreateNew extends React.Component {
 
   render() {
     return (
-      <div>
-        <h2>create a new anecdote</h2>
-        <form onSubmit={this.handleSubmit}>
-          <div>
-            content
-            <input name='content' value={this.state.content} onChange={this.handleChange} />
-          </div>
-          <div>
-            author
-            <input name='author' value={this.state.author} onChange={this.handleChange} />
-          </div>
-          <div>
-            url for more info
-            <input name='info' value={this.state.info} onChange={this.handleChange} />
-          </div>
-          <button>create</button>
-        </form>
-      </div>
+      <Form onSubmit={this.handleSubmit}>
+        <Form.Field>
+          <label>Anecdote</label>
+          <input placeholder="content" name='content' value={this.state.content} onChange={this.handleChange} />
+        </Form.Field>
+        <Form.Field>
+          <label>Author</label>
+          <input placeholder="author" name='author' value={this.state.author} onChange={this.handleChange} />
+        </Form.Field>
+        <Form.Field>
+          <label>Url for more info</label>
+          <input name='info' value={this.state.info} onChange={this.handleChange} />
+        </Form.Field>
+        <Button type="submit">Create</Button>
+      </Form>
+
+      /* return (
+        <div>
+          <h2>create a new anecdote</h2>
+          <form onSubmit={this.handleSubmit}>
+            <div>
+              content
+              <input name='content' value={this.state.content} onChange={this.handleChange} />
+            </div>
+            <div>
+              author
+              <input name='author' value={this.state.author} onChange={this.handleChange} />
+            </div>
+            <div>
+              url for more info
+              <input name='info' value={this.state.info} onChange={this.handleChange} />
+            </div>
+            <button>create</button>
+          </form>
+        </div> */
     )
 
   }
@@ -227,15 +264,17 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <h1>Software anecdotes</h1>
-        <Menu
-          state={this.state}
-          addNew={this.addNew}
-          anecdoteById={this.anecdoteById}
-        />
-        <Footer />
-      </div>
+      <Container>
+        <div>
+          <h1>Software anecdotes</h1>
+          <Menu
+            state={this.state}
+            addNew={this.addNew}
+            anecdoteById={this.anecdoteById}
+          />
+          <Footer />
+        </div>
+      </Container>
     );
   }
 }
