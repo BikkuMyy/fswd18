@@ -5,7 +5,7 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import UserList from './components/UserList'
 import BlogList from './components/BlogList'
-import Blog from './components/Blog'
+import SingleBlog from './components/SingleBlog'
 import blogService from './services/blogs'
 import User from './components/User'
 import { connect } from 'react-redux'
@@ -36,7 +36,16 @@ class App extends React.Component {
     this.props.logoutUser()
   }
 
+  findBlogById = (id) => {
+    return this.props.blogs.find(b => b.id === id)
+  }
+
+  findUserById = (id) => {
+    return this.props.users.find(u => u.id === id)
+  }
+
   render() {
+
     return (
       <Container>
         <div>
@@ -49,7 +58,7 @@ class App extends React.Component {
                 <div>
                   <div>
                     <div className="menu">
-                      <NavLink exact to="/" activeClassName="selected">blogs</NavLink>&nbsp;
+                      <NavLink exact to="/blogs" activeClassName="selected">blogs</NavLink>&nbsp;
                       <NavLink to="/users" activeClassName="selected">users</NavLink>
                       <p>{this.props.user.name} kirjautunut sisään &nbsp;
                       <Button onClick={this.logout}>Kirjaudu ulos</Button>
@@ -59,13 +68,16 @@ class App extends React.Component {
                       <BlogForm />
                     </div>
                   </div>
-                  <Route exact path="/" render={() => <BlogList />} />
-                  <Route path="/users" render={() => <UserList />} />
+                  <Route exact path="/blogs" render={() => <BlogList />} />
+                  <Route exact path="/users" render={() => <UserList />} />
                   <Route path="/users/:id" render={({ match }) =>
-                    <User id={match.params.id} />
+                    <User user={this.findUserById(match.params.id)} />
                   } />
                   <Route path="/blogs/:id" render={({ match }) =>
-                    <Blog blog={this.props.blogs.find(b => b.id === match.params.id)} />
+                    <SingleBlog
+                      blog={this.findBlogById(match.params.id)}
+                      loggedUser={this.props.user}
+                    />
                   } />
                 </div>
               </Router>
@@ -80,7 +92,8 @@ class App extends React.Component {
 const mapStateToProps = (store) => {
   return {
     user: store.loggedUser,
-    blogs: store.blogs
+    blogs: store.blogs,
+    users: store.users
   }
 }
 export default connect(

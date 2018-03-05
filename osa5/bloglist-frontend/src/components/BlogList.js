@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Blog from '../components/Blog'
 import { Segment, List } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 
 class BlogList extends React.Component {
   render() {
@@ -15,8 +15,14 @@ class BlogList extends React.Component {
                 return b.likes - a.likes
               })
               .map(blog =>
-                <List.Item key={blog._id}>
-                  <Blog blog={blog} />
+                <List.Item key={blog.id}>
+                  <List.Content>
+                    <List.Header>
+                      <Link to={`/blogs/${blog.id}`}>
+                        {blog.title} - {blog.author}
+                      </Link>
+                    </List.Header>
+                  </List.Content>
                 </List.Item>
               )}
           </List>

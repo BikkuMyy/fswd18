@@ -11,8 +11,9 @@ const blogReducer = (store = [], action) => {
     case 'LIKE':
       const old = store.filter(b => b.id !== action.data.id)
       return [...old, action.data]
+    default:
+      return store
   }
-  return store
 }
 
 export const blogInit = () => {

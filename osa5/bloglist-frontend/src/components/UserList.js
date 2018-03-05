@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Table } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 
 class UserList extends React.Component {
   render() {
@@ -17,7 +18,9 @@ class UserList extends React.Component {
           <Table.Body>
             {this.props.users.map(user =>
               <Table.Row key={user.id}>
-                <Table.Cell><a href={`/users/${user.id}`}>{user.name}</a></Table.Cell>
+                <Table.Cell>
+                  <Link to={`/users/${user.id}`}>{user.name}</Link>
+                </Table.Cell>
                 <Table.Cell>{user.blogs.length}</Table.Cell>
               </Table.Row>
             )}
